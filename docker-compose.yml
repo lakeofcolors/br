@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:12
+    container_name: br.postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis
+    container_name: br.redis
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:3-management  # guest / guest
+    container_name: br.rabittmq
+    ports:
+      - 15673:15672
+      - 5673:5672
+
+  rest:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: flask run
+    container_name: br.rest
+    ports:
+      - 8600:8600
+    volumes:
+      - ./api:/usr/src/api
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    environment:
+      - FLASK_APP=run.py
+    env_file: api/.env
