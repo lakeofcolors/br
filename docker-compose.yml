@@ -29,12 +29,12 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    command: flask run
+    command: flask run --host=0.0.0.0 --port=8080
     container_name: br.rest
     ports:
-      - 8600:8600
+      - 8080:8080
     volumes:
-      - ./api:/usr/src/api
+      - .:/api
     depends_on:
       - postgres
       - redis
